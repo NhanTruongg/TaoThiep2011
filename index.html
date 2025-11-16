@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thiệp 20/11 - Auto Fit Nội Dung</title>
-    
     <style>
         * {
             margin: 0;
@@ -20,11 +19,11 @@
             background-color: #f0f8ff;
             font-family: 'Times New Roman', serif;
             overflow: hidden;
-            padding: 20px;
+            padding: 15px;
         }
 
         /* ---------------------------------- */
-        /* CONTAINER CHUNG */
+        /* CONTAINER CHUNG - Tự động cao */
         /* ---------------------------------- */
         .card-wrapper {
             width: 350px;
@@ -32,6 +31,7 @@
             position: relative;
             perspective: 1000px;
             margin: 0 auto;
+            transition: height 0.3s ease;
         }
 
         /* ---------------------------------- */
@@ -39,15 +39,15 @@
         /* ---------------------------------- */
         .card {
             width: 350px;
-            min-height: 200px;
+            min-height: 180px; /* Chiều cao tối thiểu */
             position: absolute;
             bottom: 0;
             left: 0;
             background-color: #ffffff;
             border-radius: 12px;
-            padding: 25px 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            transform: translateY(100%) scale(0.85);
+            padding: 25px 22px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+            transform: translateY(100%) scale(0.9);
             transform-origin: bottom center;
             transition: all 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             opacity: 0;
@@ -57,25 +57,25 @@
 
         /* Khi mở: Bay lên + phóng to */
         .card-wrapper.active .card {
-            transform: translateY(-150px) scale(1.1);
+            transform: translateY(-160px) scale(1.12);
             opacity: 1;
         }
 
+        /* Nội dung thiệp */
         .card-content {
-            text-align: center;
             position: relative;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             min-height: 100%;
         }
 
         .card-content h1 {
             color: #cc3333;
             font-size: 2.2em;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             border-bottom: 3px double #d89648;
             padding-bottom: 6px;
+            text-align: center;
             position: relative;
             z-index: 2;
         }
@@ -83,21 +83,21 @@
         .greeting-text {
             margin-top: 16px;
             font-size: 1.05em;
-            line-height: 1.7;
+            line-height: 1.75;
             color: #333;
             text-align: left;
-            padding: 0 8px;
+            padding: 0 5px;
             position: relative;
             z-index: 2;
         }
 
         .signature {
-            margin-top: 22px;
+            margin-top: 24px;
             font-style: italic;
             font-weight: bold;
             color: #555;
             text-align: right;
-            padding-right: 12px;
+            padding-right: 10px;
             font-size: 1.1em;
             position: relative;
             z-index: 2;
@@ -108,9 +108,9 @@
         /* ---------------------------------- */
         .flower-decoration {
             position: absolute;
-            width: 70px;
-            height: 70px;
-            opacity: 0.65;
+            width: 72px;
+            height: 72px;
+            opacity: 0.7;
             z-index: 1;
         }
 
@@ -122,8 +122,8 @@
         }
 
         .flower-decoration::before {
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             background-color: #ff8c00;
             box-shadow: 0 0 12px rgba(255, 140, 0, 0.5);
             top: 50%;
@@ -132,8 +132,135 @@
         }
 
         .flower-decoration::after {
-            width: 45px;
+            width: 46px;
             height: 18px;
             background-color: #3cb371;
             border-radius: 0 50% 50% 0;
             transform: rotate(45deg);
+            top: 10px;
+            left: 0;
+        }
+
+        .flower-top-left { top: 12px; left: 12px; transform: rotate(-20deg); }
+        .flower-bottom-right { bottom: 12px; right: 12px; transform: rotate(160deg); }
+
+        /* ---------------------------------- */
+        /* PHONG BÌ */
+        /* ---------------------------------- */
+        .envelope {
+            width: 350px;
+            height: 250px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            background-color: #f7b267;
+            border-radius: 12px;
+            z-index: 2;
+            transition: all 1.5s ease;
+            transform-style: preserve-3d;
+        }
+
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 175px solid transparent;
+            border-right: 175px solid transparent;
+            border-top: 125px solid #d89648;
+            transform-origin: top;
+            transition: transform 0.6s ease 0.7s;
+            z-index: 3;
+        }
+
+        .card-wrapper.active .envelope::before {
+            transform: rotateX(180deg);
+        }
+
+        .card-wrapper.active .envelope {
+            transform: translateY(320px) scale(0.75);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ---------------------------------- */
+        /* NÚT MỞ */
+        /* ---------------------------------- */
+        .open-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 4;
+            padding: 13px 26px;
+            background-color: #cc3333;
+            color: white;
+            border: none;
+            border-radius: 28px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.15em;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.22);
+            transition: all 0.3s ease;
+        }
+
+        .open-button:hover {
+            background-color: #b02a2a;
+            transform: translate(-50%, -50%) scale(1.08);
+        }
+
+        .card-wrapper.active .open-button {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card-wrapper" id="cardWrapper">
+    <div class="card" id="card">
+        <div class="card-content">
+            <div class="flower-decoration flower-top-left"></div>
+            <div class="flower-decoration flower-bottom-right"></div>
+
+            <h1>Kính Chúc Mừng 20/11</h1>
+            
+            <p class="greeting-text">
+                "Nhân ngày Nhà giáo Việt Nam, chúng con xin gửi lời tri ân sâu sắc nhất đến những người Thầy, người Cô cao quý. Sự tận tụy và nhiệt huyết của Thầy Cô chính là ngọn hải đăng soi sáng con đường tri thức cho bao thế hệ học trò.
+                <br><br>
+                Kính chúc Thầy Cô luôn mạnh khỏe, hạnh phúc và gặt hái thêm nhiều thành công rực rỡ trong sự nghiệp trồng người!"
+            </p>
+            
+            <p class="signature">Trân trọng,<br>Học trò của Thầy/Cô</p>
+        </div>
+    </div>
+    
+    <div class="envelope">
+        <button class="open-button" id="openCardButton">
+            Mở Phong Bì
+        </button>
+    </div>
+</div>
+
+<script>
+    document.getElementById('openCardButton').addEventListener('click', function() {
+        const wrapper = document.getElementById('cardWrapper');
+        const card = document.getElementById('card');
+
+        if (!wrapper.classList.contains('active')) {
+            wrapper.classList.add('active');
+
+            // Tính chiều cao thực tế của card
+            const cardHeight = card.scrollHeight + 50; // + padding/margin
+            const finalHeight = cardHeight + 200; // + không gian bay lên
+
+            // Cập nhật chiều cao wrapper
+            wrapper.style.height = finalHeight + 'px';
+        }
+    });
+</script>
+
+</body>
+</html>
