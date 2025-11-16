@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thiệp Chúc Mừng 20/11 - Fixed</title>
+    <title>Thiệp 20/11 - Auto Fit Nội Dung</title>
     
     <style>
         * {
@@ -20,96 +20,97 @@
             background-color: #f0f8ff;
             font-family: 'Times New Roman', serif;
             overflow: hidden;
+            padding: 20px;
         }
 
         /* ---------------------------------- */
-        /* CONTAINER CHUNG - Tăng chiều cao để chứa thiệp bay lên */
+        /* CONTAINER CHUNG */
         /* ---------------------------------- */
         .card-wrapper {
             width: 350px;
-            height: 500px; /* Tăng chiều cao để thiệp có chỗ hiện */
+            min-height: 300px;
             position: relative;
-            perspective: 1000px; /* Tạo hiệu ứng 3D */
-            margin: 20px;
+            perspective: 1000px;
+            margin: 0 auto;
         }
 
         /* ---------------------------------- */
-        /* TẤM THIỆP */
+        /* TẤM THIỆP - AUTO HEIGHT */
         /* ---------------------------------- */
         .card {
             width: 350px;
-            height: 250px;
+            min-height: 200px;
             position: absolute;
-            bottom: 0; /* Bắt đầu từ đáy phong bì */
+            bottom: 0;
             left: 0;
             background-color: #ffffff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-            transform: translateY(0) scale(0.8);
-            transform-style: preserve-3d;
+            border-radius: 12px;
+            padding: 25px 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(100%) scale(0.85);
+            transform-origin: bottom center;
             transition: all 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             opacity: 0;
             z-index: 1;
             backface-visibility: hidden;
         }
 
-        /* Khi mở: Thiệp bay lên, phóng to, hiện rõ */
+        /* Khi mở: Bay lên + phóng to */
         .card-wrapper.active .card {
-            transform: translateY(-180px) scale(1.15);
+            transform: translateY(-150px) scale(1.1);
             opacity: 1;
         }
 
         .card-content {
             text-align: center;
             position: relative;
-            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
+            min-height: 100%;
         }
 
         .card-content h1 {
             color: #cc3333;
-            font-size: 2.3em;
-            margin-bottom: 10px;
+            font-size: 2.2em;
+            margin-bottom: 12px;
             border-bottom: 3px double #d89648;
-            padding-bottom: 5px;
+            padding-bottom: 6px;
             position: relative;
             z-index: 2;
         }
 
         .greeting-text {
-            margin-top: 15px;
+            margin-top: 16px;
             font-size: 1.05em;
-            line-height: 1.6;
+            line-height: 1.7;
             color: #333;
             text-align: left;
-            padding: 0 10px;
+            padding: 0 8px;
             position: relative;
             z-index: 2;
         }
 
         .signature {
-            margin-top: 20px;
+            margin-top: 22px;
             font-style: italic;
             font-weight: bold;
             color: #555;
             text-align: right;
-            padding-right: 10px;
+            padding-right: 12px;
+            font-size: 1.1em;
             position: relative;
             z-index: 2;
         }
 
         /* ---------------------------------- */
-        /* TRANG TRÍ HOA LÁ */
+        /* HOA TRANG TRÍ */
         /* ---------------------------------- */
         .flower-decoration {
             position: absolute;
-            width: 80px;
-            height: 80px;
-            opacity: 0.7;
+            width: 70px;
+            height: 70px;
+            opacity: 0.65;
             z-index: 1;
         }
 
@@ -121,136 +122,18 @@
         }
 
         .flower-decoration::before {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background-color: #ff8c00;
-            box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+            box-shadow: 0 0 12px rgba(255, 140, 0, 0.5);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
 
         .flower-decoration::after {
-            width: 50px;
-            height: 20px;
+            width: 45px;
+            height: 18px;
             background-color: #3cb371;
             border-radius: 0 50% 50% 0;
             transform: rotate(45deg);
-            top: 10px;
-            left: 0px;
-        }
-
-        .flower-top-left { top: 10px; left: 10px; transform: rotate(-20deg); }
-        .flower-bottom-right { bottom: 10px; right: 10px; transform: rotate(160deg); }
-
-        /* ---------------------------------- */
-        /* PHONG BÌ */
-        /* ---------------------------------- */
-        .envelope {
-            width: 350px;
-            height: 250px;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            background-color: #f7b267;
-            border-radius: 10px;
-            z-index: 2;
-            transition: all 1.5s ease;
-            transform-style: preserve-3d;
-        }
-
-        .envelope::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 0;
-            border-left: 175px solid transparent;
-            border-right: 175px solid transparent;
-            border-top: 125px solid #d89648;
-            transform-origin: top;
-            transition: transform 0.6s ease 0.7s;
-            z-index: 3;
-        }
-
-        .card-wrapper.active .envelope::before {
-            transform: rotateX(180deg);
-        }
-
-        .card-wrapper.active .envelope {
-            transform: translateY(300px) scale(0.8);
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* ---------------------------------- */
-        /* NÚT MỞ */
-        /* ---------------------------------- */
-        .open-button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 4;
-            padding: 12px 24px;
-            background-color: #cc3333;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1.1em;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-        }
-
-        .open-button:hover {
-            background-color: #a62929;
-            transform: translate(-50%, -50%) scale(1.05);
-        }
-
-        .card-wrapper.active .open-button {
-            opacity: 0;
-            pointer-events: none;
-        }
-    </style>
-</head>
-<body>
-
-<div class="card-wrapper">
-    <div class="card">
-        <div class="card-content">
-            <div class="flower-decoration flower-top-left"></div>
-            <div class="flower-decoration flower-bottom-right"></div>
-
-            <h1>Kính Chúc Mừng 20/11</h1>
-            
-            <p class="greeting-text">
-                "Nhân ngày Nhà giáo Việt Nam, chúng con xin gửi lời tri ân sâu sắc nhất đến những người Thầy, người Cô cao quý. Sự tận tụy và nhiệt huyết của Thầy Cô chính là ngọn hải đăng soi sáng con đường tri thức cho bao thế hệ học trò.
-                <br><br>
-                Kính chúc Thầy Cô luôn mạnh khỏe, hạnh phúc và gặt hái thêm nhiều thành công rực rỡ trong sự nghiệp trồng người!"
-            </p>
-            
-            <p class="signature">Trân trọng,<br>Học trò của Thầy/Cô</p>
-        </div>
-    </div>
-    
-    <div class="envelope">
-        <button class="open-button" id="openCardButton">
-            Mở Phong Bì
-        </button>
-    </div>
-</div>
-
-<script>
-    document.getElementById('openCardButton').addEventListener('click', function() {
-        const wrapper = document.querySelector('.card-wrapper');
-        if (!wrapper.classList.contains('active')) {
-            wrapper.classList.add('active');
-        }
-    });
-</script>
-
-</body>
-</html>
