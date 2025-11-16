@@ -50,22 +50,28 @@
             box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05);
             
             /* Ban đầu ẩn trong phong bì */
-            transform: translateY(100%); 
+            transform: translateY(100%) scale(1); /* Thêm scale(1) để có điểm bắt đầu */
             transition: transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
             opacity: 0; 
             z-index: 1; 
         }
 
-        /* FIX 1: Thiệp bay lên hoàn toàn */
+        /* FIX 1: Thiệp bay lên hoàn toàn và phóng to */
         .card-wrapper.active .card {
-            /* Tăng giá trị dịch chuyển lên để thiệp hiện ra hoàn toàn */
-            transform: translateY(-300px); 
+            /* Tăng giá trị dịch chuyển lên để thiệp hiện ra hoàn toàn và phóng to */
+            transform: translateY(-300px) scale(1.2); /* Phóng to 1.2 lần */
             opacity: 1; 
         }
         
         /* Nội dung Thiệp (Không thay đổi) */
         .card-content {
             text-align: center;
+            position: relative; /* Cho phép định vị hoa lá */
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .card-content h1 {
@@ -74,6 +80,8 @@
             margin-bottom: 10px;
             border-bottom: 3px double #d89648;
             padding-bottom: 5px;
+            position: relative;
+            z-index: 2; /* Đảm bảo chữ nằm trên hoa lá */
         }
 
         .greeting-text {
@@ -83,6 +91,8 @@
             color: #333;
             text-align: left;
             padding: 0 10px;
+            position: relative;
+            z-index: 2;
         }
         
         .signature {
@@ -92,6 +102,59 @@
             color: #555;
             text-align: right;
             padding-right: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ---------------------------------- */
+        /* TRANG TRÍ HOA LÁ BÊN TRONG THIỆP */
+        /* ---------------------------------- */
+        .flower-decoration {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            opacity: 0.7;
+            z-index: 1; /* Nằm dưới chữ */
+        }
+
+        .flower-decoration::before, .flower-decoration::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        /* Cánh hoa */
+        .flower-decoration::before {
+            width: 40px;
+            height: 40px;
+            background-color: #ff8c00; /* Màu cam đậm */
+            box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Lá */
+        .flower-decoration::after {
+            width: 50px;
+            height: 20px;
+            background-color: #3cb371; /* Xanh lá cây nhạt */
+            border-radius: 0 50% 50% 0;
+            transform: rotate(45deg);
+            top: 10px;
+            left: 0px;
+        }
+
+        .flower-top-left {
+            top: 10px;
+            left: 10px;
+            transform: rotate(-20deg);
+        }
+
+        .flower-bottom-right {
+            bottom: 10px;
+            right: 10px;
+            transform: rotate(160deg);
         }
 
         /* ---------------------------------- */
@@ -128,9 +191,8 @@
             transform: rotateX(180deg); 
         }
         
-        /* FIX 2: Phong bì trượt xuống và biến mất hoàn toàn */
+        /* Phong bì trượt xuống và biến mất hoàn toàn */
         .card-wrapper.active .envelope {
-            /* Tăng giá trị dịch chuyển xuống */
             transform: translateY(350px); 
             opacity: 0; 
             pointer-events: none; 
@@ -138,7 +200,7 @@
 
 
         /* ---------------------------------- */
-        /* NÚT MỞ PHONG BÌ (Không thay đổi) */
+        /* NÚT MỞ PHONG BÌ */
         /* ---------------------------------- */
         .open-button {
             position: absolute;
@@ -174,6 +236,9 @@
     
     <div class="card">
         <div class="card-content">
+            <div class="flower-decoration flower-top-left"></div>
+            <div class="flower-decoration flower-bottom-right"></div>
+
             <h1>Kính Chúc Mừng 20/11</h1>
             
             <p class="greeting-text">
@@ -209,4 +274,3 @@
 
 </body>
 </html>
-
