@@ -3,260 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thiệp 20/11 - Tạo Khi Nhấn</title>
+    <title>Thiệp 20/11 - Nhập Tên & Tải PNG</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            min-height: 100vh; background: linear-gradient(135deg, #f0f8ff, #e6f3ff);
+            font-family: 'Times New Roman', serif; padding: 20px; gap: 18px;
         }
 
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
-            font-family: 'Times New Roman', serif;
-            padding: 20px;
-            gap: 20px;
+        .input-group {
+            display: flex; flex-direction: column; gap: 8px; width: 350px;
         }
+        .input-group label { font-weight: bold; color: #cc3333; font-size: 1.1em; }
+        .input-group input {
+            padding: 12px 16px; font-size: 1em; border: 2px solid #d89648; border-radius: 12px;
+            outline: none; transition: all 0.3s;
+        }
+        .input-group input:focus { border-color: #cc3333; box-shadow: 0 0 8px rgba(204,51,51,0.3); }
 
         .create-button {
-            padding: 14px 32px;
-            background-color: #cc3333;
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-size: 1.2em;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
+            padding: 14px 32px; background: #cc3333; color: white; border: none;
+            border-radius: 30px; font-size: 1.2em; font-weight: bold; cursor: pointer;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2); transition: all 0.3s; margin-top: 10px;
         }
+        .create-button:hover { background: #b02a2a; transform: translateY(-2px); }
 
-        .create-button:hover {
-            background-color: #b02a2a;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+        .download-button {
+            padding: 12px 28px; background: #3cb371; color: white; border: none;
+            border-radius: 25px; font-size: 1.1em; font-weight: bold; cursor: pointer;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.18); transition: all 0.3s; margin-top: 15px;
+            opacity: 0; pointer-events: none;
         }
+        .download-button.visible { opacity: 1; pointer-events: auto; }
+        .download-button:hover { background: #2e8b57; transform: translateY(-2px); }
 
-        .card-wrapper {
-            width: 350px;
-            min-height: 300px;
-            position: relative;
-            perspective: 1000px;
-            margin: 0 auto;
-            opacity: 0;
-            transform: scale(0.8);
-            transition: all 0.6s ease;
-        }
-
-        .card-wrapper.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-
+        .card-wrapper { width: 350px; min-height: 300px; position: relative; perspective: 1000px; opacity: 0; transform: scale(0.8); transition: all 0.6s; }
+        .card-wrapper.visible { opacity: 1; transform: scale(1); }
         .card {
-            width: 350px;
-            min-height: 180px;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            background-color: #ffffff;
-            border-radius: 12px;
-            padding: 25px 22px;
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
-            transform: translateY(100%) scale(0.9);
-            transform-origin: bottom center;
-            transition: all 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            opacity: 0;
-            z-index: 1;
-            backface-visibility: hidden;
+            width: 350px; min-height: 180px; position: absolute; bottom: 0; left: 0;
+            background: #fff; border-radius: 12px; padding: 25px 22px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.18); transform: translateY(100%) scale(0.9);
+            transform-origin: bottom center; transition: all 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0; z-index: 1; backface-visibility: hidden;
         }
+        .card-wrapper.active .card { transform: translateY(-160px) scale(1.12); opacity: 1; }
+        .card-content { position: relative; display: flex; flex-direction: column; min-height: 100%; }
+        .card-content h1 { color: #cc3333; font-size: 2.2em; margin-bottom: 14px; border-bottom: 3px double #d89648; padding-bottom: 6px; text-align: center; z-index: 2; }
+        .greeting-text { margin-top: 16px; font-size: 1.05em; line-height: 1.75; color: #333; text-align: left; padding: 0 5px; z-index: 2; }
+        .signature { margin-top: 24px; font-style: italic; font-weight: bold; color: #555; text-align: right; padding-right: 10px; font-size: 1.1em; z-index: 2; }
 
-        .card-wrapper.active .card {
-            transform: translateY(-160px) scale(1.12);
-            opacity: 1;
-        }
-
-        .card-content {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            min-height: 100%;
-        }
-
-        .card-content h1 {
-            color: #cc3333;
-            font-size: 2.2em;
-            margin-bottom: 14px;
-            border-bottom: 3px double #d89648;
-            padding-bottom: 6px;
-            text-align: center;
-            position: relative;
-            z-index: 2;
-        }
-
-        .greeting-text {
-            margin-top: 16px;
-            font-size: 1.05em;
-            line-height: 1.75;
-            color: #333;
-            text-align: left;
-            padding: 0 5px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .signature {
-            margin-top: 24px;
-            font-style: italic;
-            font-weight: bold;
-            color: #555;
-            text-align: right;
-            padding-right: 10px;
-            font-size: 1.1em;
-            position: relative;
-            z-index: 2;
-        }
-
-        .flower-decoration {
-            position: absolute;
-            width: 72px;
-            height: 72px;
-            opacity: 0.7;
-            z-index: 1;
-        }
-
-        .flower-decoration::before,
-        .flower-decoration::after {
-            content: '';
-            position: absolute;
-            border-radius: 50%;
-        }
-
-        .flower-decoration::before {
-            width: 38px;
-            height: 38px;
-            background-color: #ff8c00;
-            box-shadow: 0 0 12px rgba(255, 140, 0, 0.5);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .flower-decoration::after {
-            width: 46px;
-            height: 18px;
-            background-color: #3cb371;
-            border-radius: 0 50% 50% 0;
-            transform: rotate(45deg);
-            top: 10px;
-            left: 0;
-        }
-
+        .flower-decoration { position: absolute; width: 72px; height: 72px; opacity: 0.7; z-index: 1; }
+        .flower-decoration::before, .flower-decoration::after { content: ''; position: absolute; border-radius: 50%; }
+        .flower-decoration::before { width: 38px; height: 38px; background: #ff8c00; box-shadow: 0 0 12px rgba(255,140,0,0.5); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+        .flower-decoration::after { width: 46px; height: 18px; background: #3cb371; border-radius: 0 50% 50% 0; transform: rotate(45deg); top: 10px; left: 0; }
         .flower-top-left { top: 12px; left: 12px; transform: rotate(-20deg); }
         .flower-bottom-right { bottom: 12px; right: 12px; transform: rotate(160deg); }
 
-        .envelope {
-            width: 350px;
-            height: 250px;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            border-radius: 12px;
-            z-index: 2;
-            transition: all 1.5s ease;
-            transform-style: preserve-3d;
-        }
-
-        .envelope::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 0;
-            border-left: 175px solid transparent;
-            border-right: 175px solid transparent;
-            border-top: 125px solid;
-            transform-origin: top;
-            transition: transform 0.6s ease 0.7s;
-            z-index: 3;
-        }
-
-        .card-wrapper.active .envelope::before {
-            transform: rotateX(180deg);
-        }
-
-        .card-wrapper.active .envelope {
-            transform: translateY(320px) scale(0.75);
-            opacity: 0;
-            pointer-events: none;
-        }
+        .envelope { width: 350px; height: 250px; position: absolute; bottom: 0; left: 0; border-radius: 12px; z-index: 2; transition: all 1.5s ease; transform-style: preserve-3d; }
+        .envelope::before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 175px solid transparent; border-right: 175px solid transparent; border-top: 125px solid; transform-origin: top; transition: transform 0.6s ease 0.7s; z-index: 3; }
+        .card-wrapper.active .envelope::before { transform: rotateX(180deg); }
+        .card-wrapper.active .envelope { transform: translateY(320px) scale(0.75); opacity: 0; pointer-events: none; }
 
         .open-button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 4;
-            padding: 13px 26px;
-            background-color: #cc3333;
-            color: white;
-            border: none;
-            border-radius: 28px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1.15em;
-            box-shadow: 0 5px 12px rgba(0,0,0,0.22);
-            transition: all 0.3s ease;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 4;
+            padding: 13px 26px; background: #cc3333; color: white; border: none; border-radius: 28px;
+            cursor: pointer; font-weight: bold; font-size: 1.15em; box-shadow: 0 5px 12px rgba(0,0,0,0.22); transition: all 0.3s;
         }
-
-        .open-button:hover {
-            background-color: #b02a2a;
-            transform: translate(-50%, -50%) scale(1.08);
-        }
-
-        .card-wrapper.active .open-button {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .loading {
-            color: #cc3333;
-            font-style: italic;
-            margin-top: 10px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .loading.show { opacity: 1; }
+        .open-button:hover { background: #b02a2a; transform: translate(-50%, -50%) scale(1.08); }
+        .card-wrapper.active .open-button { opacity: 0; pointer-events: none; }
     </style>
 </head>
 <body>
 
-    <button class="create-button" id="createCardBtn">
-        Tạo Thiệp 20/11
-    </button>
+    <div class="input-group">
+        <label for="teacherName">Tên Thầy/Cô:</label>
+        <input type="text" id="teacherName" placeholder="VD: Cô Lan, Thầy Minh..." value="">
+    </div>
 
-    <div class="loading" id="loadingText">Đang tạo lời chúc từ AI...</div>
+    <button id="createBtn" class="create-button">Tạo Thiệp 20/11</button>
+
+    <button id="downloadBtn" class="download-button">Tải Thiệp PNG</button>
 
     <div id="cardContainer"></div>
 
-    <script type="module">
-        // Import từ CDN chính thức của SDK mới
-        import { GoogleGenAI } from "https://cdn.jsdelivr.net/npm/@google/genai@0.17.0/+esm";
+    <!-- html2canvas để tải PNG -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
-        // === CẤU HÌNH ===
-        // THAY BẰNG KEY THẬT CỦA BẠN
-        const API_KEY = "AIzaSyDh6eUW1XaUDki_xDqJy_LigX5rMtx30uQ"; 
-        // Khởi tạo SDK mới
-        const ai = new GoogleGenAI({ apiKey: API_KEY });
+    <script>
+        // === 10 LỜI CHÚC ===
+        const greetings = [
+            `"Nhân ngày Nhà giáo Việt Nam, chúng con xin gửi lời tri ân sâu sắc nhất đến {teacher} – người lái đò thầm lặng. Chúc {teacher} luôn mạnh khỏe, hạnh phúc và gặt hái nhiều thành công!"<br><br>Trân trọng,<br>Học trò`,
 
-        // === DANH SÁCH MÀU PHONG BÌ ===
+            `"{teacher} không chỉ dạy con chữ, mà còn dạy con cách làm người. Dù thời gian có trôi, công ơn của {teacher} mãi khắc sâu trong tim chúng con.<br><br>Chúc {teacher} ngày 20/11 thật nhiều niềm vui!"`,
+
+            `"Kính chúc {teacher} một ngày 20/11 tràn đầy yêu thương, được học trò tri ân và gia đình hạnh phúc. Cảm ơn {teacher} vì đã thắp lên ngọn lửa đam mê học tập!"`,
+
+            `"Nhân ngày Nhà giáo, chúng con xin gửi lời chúc tốt đẹp nhất đến {teacher} – người đã hy sinh tuổi trẻ để gieo mầm tri thức. Chúc {teacher} luôn khỏe mạnh!"`,
+
+            `"{teacher} là ngọn hải đăng soi sáng con đường học vấn. Xin gửi lời tri ân chân thành và chúc {teacher} ngày 20/11 thật ý nghĩa!"`,
+
+            `"Dù mai này có đi đâu, chúng con vẫn luôn nhớ về những bài học quý giá từ {teacher}. Chúc {teacher} luôn dồi dào sức khỏe và hạnh phúc!"`,
+
+            `"Cảm ơn {teacher} đã kiên nhẫn dìu dắt chúng con qua bao khó khăn. Chúc {teacher} ngày Nhà giáo thật nhiều hoa, nhiều quà và thật nhiều tình thương!"`,
+
+            `"{teacher} là người truyền lửa, là nguồn cảm hứng bất tận. Chúc {teacher} ngày 20/11 thật rực rỡ và luôn giữ được ngọn lửa đam mê với nghề!"`,
+
+            `"Lòng biết ơn dành cho {teacher} không bao giờ phai nhạt. Chúc {teacher} luôn mạnh khỏe, hạnh phúc và tiếp tục dẫn dắt nhiều thế hệ học trò thành công!"`,
+
+            `"Nhân ngày 20/11, kính chúc {teacher} luôn vui vẻ, khỏe mạnh và nhận được thật nhiều tình cảm từ học trò cũ lẫn mới. Cảm ơn {teacher} vì tất cả!"`
+        ];
+
         const envelopeColors = [
             { base: '#f7b267', flap: '#d89648' },
             { base: '#ffffff', flap: '#f0f0f0' },
@@ -265,46 +122,24 @@
             { base: '#fff9e6', flap: '#ffe066' }
         ];
 
-        // === LỜI CHÚC MẶC ĐỊNH ===
-        const fallbackGreetings = [
-            `"Nhân ngày 20/11, kính chúc Thầy Cô luôn mạnh khỏe, hạnh phúc và tiếp tục dẫn dắt nhiều thế hệ học trò thành công!"`,
-            `"Thầy Cô là ngọn lửa soi đường, là người lái đò thầm lặng. Chúc Thầy Cô ngày Nhà giáo thật vui!"`,
-            `"Cảm ơn Thầy Cô đã dạy con không chỉ kiến thức, mà còn cách làm người. Chúc Thầy Cô luôn hạnh phúc!"`
-        ];
+        let currentCardWrapper = null;
 
-        // === TẠO LỜI CHÚC TỪ GEMINI (Đã sửa) ===
-        async function generateGreeting() {
-            try {
-                // Sử dụng hàm generateContent chính xác của SDK mới
-                const response = await ai.models.generateContent({
-                    model: "gemini-2.5-flash", // Đổi sang model 2.5-flash
-                    contents: `Viết một lời chúc ngắn (2-4 câu), trang trọng, ý nghĩa bằng tiếng Việt cho ngày 20/11 dành cho Thầy Cô giáo. Dùng <br><br> để xuống dòng. Không dùng dấu ngoặc kép.`,
-                });
-                
-                let text = response.text.trim();
-                text = text.replace(/"/g, '').replace(/\n/g, '<br><br>');
-                return text;
-            } catch (error) {
-                console.warn("Gemini lỗi, dùng lời chúc mặc định:", error);
-                // Dùng một lời chúc mặc định nếu API thất bại
-                return fallbackGreetings[Math.floor(Math.random() * fallbackGreetings.length)];
-            }
-        }
+        function createCard() {
+            const teacherName = document.getElementById('teacherName').value.trim();
+            const name = teacherName ? teacherName : "Thầy/Cô";
 
-        // === TẠO THIỆP ===
-        async function createCard() {
             const container = document.getElementById('cardContainer');
-            const loading = document.getElementById('loadingText');
-            loading.classList.add('show');
-            container.innerHTML = ''; // Xóa thiệp cũ
+            const createBtn = document.getElementById('createBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
 
-            // Tạo lời chúc
-            const greeting = await generateGreeting();
+            // Ẩn nút tạo
+            createBtn.style.display = 'none';
 
-            // Random màu
+            // Random
+            let greeting = greetings[Math.floor(Math.random() * greetings.length)];
+            greeting = greeting.replace(/{teacher}/g, name);
             const color = envelopeColors[Math.floor(Math.random() * envelopeColors.length)];
 
-            // Tạo HTML thiệp
             const cardHTML = `
             <div class="card-wrapper visible" id="cardWrapper">
                 <div class="card" id="card">
@@ -313,44 +148,66 @@
                         <div class="flower-decoration flower-bottom-right"></div>
                         <h1>Kính Chúc Mừng 20/11</h1>
                         <p class="greeting-text">${greeting}</p>
-                        <p class="signature">Trân trọng,<br>Học trò của Thầy/Cô</p>
                     </div>
                 </div>
-                <div class="envelope" style="background-color: ${color.base};">
+                <div class="envelope" style="background-color:${color.base}">
                     <button class="open-button">Mở Phong Bì</button>
                 </div>
             </div>
-            <style>
-                #cardWrapper .envelope::before { border-top-color: ${color.flap} !important; }
-            </style>
+            <style>#cardWrapper .envelope::before { border-top-color: ${color.flap} !important; }</style>
             `;
 
             container.innerHTML = cardHTML;
-            loading.classList.remove('show');
+            currentCardWrapper = document.getElementById('cardWrapper');
 
-            // Gắn sự kiện mở
-            // Dùng requestAnimationFrame để đảm bảo phần tử đã render
-            requestAnimationFrame(() => {
-                const openButton = document.querySelector('.open-button');
-                if (openButton) {
-                    openButton.addEventListener('click', function() {
-                        const wrapper = document.getElementById('cardWrapper');
-                        const card = document.getElementById('card');
-                        if (!wrapper.classList.contains('active')) {
-                            wrapper.classList.add('active');
-                            setTimeout(() => {
-                                // Điều chỉnh chiều cao sau khi thiệp bung ra
-                                const height = card.scrollHeight + 280; 
-                                wrapper.style.height = height + 'px';
-                            }, 100);
-                        }
-                    });
-                }
-            });
+            // Hiển thị nút tải
+            downloadBtn.classList.add('visible');
+
+            // Mở phong bì
+            setTimeout(() => {
+                document.querySelector('.open-button').onclick = () => {
+                    const wrapper = document.getElementById('cardWrapper');
+                    const card = document.getElementById('card');
+                    if (!wrapper.classList.contains('active')) {
+                        wrapper.classList.add('active');
+                        setTimeout(() => {
+                            wrapper.style.height = (card.scrollHeight + 280) + 'px';
+                        }, 100);
+                    }
+                };
+            }, 100);
         }
 
-        // === NÚT TẠO THIỆP ===
-        document.getElementById('createCardBtn').addEventListener('click', createCard);
+        // === TẢI PNG ===
+        document.getElementById('downloadBtn').onclick = async () => {
+            if (!currentCardWrapper) return;
+
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.textContent = "Đang tải...";
+            downloadBtn.disabled = true;
+
+            try {
+                const canvas = await html2canvas(currentCardWrapper, {
+                    scale: 2,
+                    backgroundColor: null,
+                    logging: false
+                });
+
+                const link = document.createElement('a');
+                link.download = `Thiep-2011-${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } catch (err) {
+                alert("Lỗi tải ảnh. Vui lòng thử lại!");
+                console.error(err);
+            } finally {
+                downloadBtn.textContent = "Tải Thiệp PNG";
+                downloadBtn.disabled = false;
+            }
+        };
+
+        // === NÚT TẠO ===
+        document.getElementById('createBtn').onclick = createCard;
     </script>
 </body>
 </html>
