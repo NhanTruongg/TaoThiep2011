@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thiệp 20/11 - Auto Fit Nội Dung</title>
+    <title>Thiệp 20/11 - Random & Gemini</title>
     <style>
         * {
             margin: 0;
@@ -22,9 +22,6 @@
             padding: 15px;
         }
 
-        /* ---------------------------------- */
-        /* CONTAINER CHUNG - Tự động cao */
-        /* ---------------------------------- */
         .card-wrapper {
             width: 350px;
             min-height: 300px;
@@ -34,12 +31,9 @@
             transition: height 0.3s ease;
         }
 
-        /* ---------------------------------- */
-        /* TẤM THIỆP - AUTO HEIGHT */
-        /* ---------------------------------- */
         .card {
             width: 350px;
-            min-height: 180px; /* Chiều cao tối thiểu */
+            min-height: 180px;
             position: absolute;
             bottom: 0;
             left: 0;
@@ -55,13 +49,11 @@
             backface-visibility: hidden;
         }
 
-        /* Khi mở: Bay lên + phóng to */
         .card-wrapper.active .card {
             transform: translateY(-160px) scale(1.12);
             opacity: 1;
         }
 
-        /* Nội dung thiệp */
         .card-content {
             position: relative;
             display: flex;
@@ -103,9 +95,7 @@
             z-index: 2;
         }
 
-        /* ---------------------------------- */
         /* HOA TRANG TRÍ */
-        /* ---------------------------------- */
         .flower-decoration {
             position: absolute;
             width: 72px;
@@ -144,16 +134,13 @@
         .flower-top-left { top: 12px; left: 12px; transform: rotate(-20deg); }
         .flower-bottom-right { bottom: 12px; right: 12px; transform: rotate(160deg); }
 
-        /* ---------------------------------- */
-        /* PHONG BÌ */
-        /* ---------------------------------- */
+        /* PHONG BÌ - MÀU RANDOM */
         .envelope {
             width: 350px;
             height: 250px;
             position: absolute;
             bottom: 0;
             left: 0;
-            background-color: #f7b267;
             border-radius: 12px;
             z-index: 2;
             transition: all 1.5s ease;
@@ -169,7 +156,7 @@
             height: 0;
             border-left: 175px solid transparent;
             border-right: 175px solid transparent;
-            border-top: 125px solid #d89648;
+            border-top: 125px solid;
             transform-origin: top;
             transition: transform 0.6s ease 0.7s;
             z-index: 3;
@@ -185,9 +172,6 @@
             pointer-events: none;
         }
 
-        /* ---------------------------------- */
-        /* NÚT MỞ */
-        /* ---------------------------------- */
         .open-button {
             position: absolute;
             top: 50%;
@@ -227,17 +211,15 @@
 
             <h1>Kính Chúc Mừng 20/11</h1>
             
-            <p class="greeting-text">
-                "Nhân ngày Nhà giáo Việt Nam, chúng con xin gửi lời tri ân sâu sắc nhất đến những người Thầy, người Cô cao quý. Sự tận tụy và nhiệt huyết của Thầy Cô chính là ngọn hải đăng soi sáng con đường tri thức cho bao thế hệ học trò.
-                <br><br>
-                Kính chúc Thầy Cô luôn mạnh khỏe, hạnh phúc và gặt hái thêm nhiều thành công rực rỡ trong sự nghiệp trồng người!"
+            <p class="greeting-text" id="greetingText">
+                Đang tải lời chúc...
             </p>
             
             <p class="signature">Trân trọng,<br>Học trò của Thầy/Cô</p>
         </div>
     </div>
     
-    <div class="envelope">
+    <div class="envelope" id="envelope">
         <button class="open-button" id="openCardButton">
             Mở Phong Bì
         </button>
@@ -245,6 +227,73 @@
 </div>
 
 <script>
+    // === DANH SÁCH MÀU PHONG BÌ ===
+    const envelopeColors = [
+        { base: '#f7b267', flap: '#d89648' }, // da
+        { base: '#ffffff', flap: '#f0f0f0' }, // trắng
+        { base: '#ffe4e1', flap: '#ffb6c1' }, // hồng nhạt
+        { base: '#e6f3ff', flap: '#b3d9ff' }, // xanh nhạt
+        { base: '#fff9e6', flap: '#ffe066' }  // vàng nhạt
+    ];
+
+    // === DANH SÁCH LỜI CHÚC TÍCH HỢP SẴN ===
+    const fallbackGreetings = [
+        `"Nhân ngày Nhà giáo Việt Nam, chúng con xin gửi lời tri ân sâu sắc nhất đến những người Thầy, người Cô cao quý. Sự tận tụy và nhiệt huyết của Thầy Cô chính là ngọn hải đăng soi sáng con đường tri thức cho bao thế hệ học trò.<br><br>Kính chúc Thầy Cô luôn mạnh khỏe, hạnh phúc và gặt hái thêm nhiều thành công rực rỡ trong sự nghiệp trồng người!"`,
+
+        `"Thầy Cô là những người lái đò thầm lặng, chở bao thế hệ học trò qua dòng sông tri thức. Dù thời gian có trôi, công ơn của Thầy Cô mãi khắc sâu trong tim chúng con.<br><br>Chúc Thầy Cô ngày 20/11 thật nhiều niềm vui và sức khỏe!"`,
+
+        `"Kính chúc Thầy Cô một ngày 20/11 tràn đầy yêu thương, được học trò tri ân, đồng nghiệp tôn trọng và gia đình hạnh phúc. Cảm ơn Thầy Cô vì đã thắp lên ngọn lửa đam mê học tập trong chúng con!"`,
+
+        `"Thầy Cô không chỉ dạy con chữ, mà còn dạy con cách làm người. Lòng biết ơn của chúng con dành cho Thầy Cô không bao giờ phai nhạt.<br><br>Chúc Thầy Cô luôn khỏe mạnh và hạnh phúc!"`
+    ];
+
+    // === CHỌN MÀU NGẪU NHIÊN ===
+    const randomColor = envelopeColors[Math.floor(Math.random() * envelopeColors.length)];
+    const envelope = document.getElementById('envelope');
+    envelope.style.backgroundColor = randomColor.base;
+    envelope.querySelector('::before')?.style?.setProperty('border-top-color', randomColor.flap);
+
+    // === GỌI GEMINI API ===
+    async function fetchGeminiGreeting() {
+        const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY_HERE'; // <-- Thay bằng key thật nếu dùng
+        const prompt = `Viết một lời chúc ngắn gọn, ý nghĩa, trang trọng bằng tiếng Việt cho ngày Nhà giáo Việt Nam 20/11, dành cho Thầy Cô, có 2-3 câu, có thể xuống dòng bằng <br><br>. Không thêm dấu ngoặc kép.`;
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ role: 'user', parts: [{ text: prompt }] }]
+                })
+            });
+
+            if (!response.ok) throw new Error('API error');
+
+            const data = await response.json();
+            const text = data.candidates[0].content.parts[0].text.trim();
+            return text.replace(/"/g, '').replace(/\n/g, '<br><br>');
+        } catch (error) {
+            console.warn('Gemini API lỗi, dùng lời chúc mặc định:', error);
+            return null;
+        }
+    }
+
+    // === TẢI LỜI CHÚC ===
+    async function loadGreeting() {
+        const greetingEl = document.getElementById('greetingText');
+
+        // Thử dùng Gemini
+        let greeting = await fetchGeminiGreeting();
+
+        // Nếu lỗi → dùng random từ danh sách
+        if (!greeting) {
+            greeting = fallbackGreetings[Math.floor(Math.random() * fallbackGreetings.length)];
+        }
+
+        greetingEl.innerHTML = greeting;
+    }
+
+    // === MỞ THIỆP ===
     document.getElementById('openCardButton').addEventListener('click', function() {
         const wrapper = document.getElementById('cardWrapper');
         const card = document.getElementById('card');
@@ -252,14 +301,27 @@
         if (!wrapper.classList.contains('active')) {
             wrapper.classList.add('active');
 
-            // Tính chiều cao thực tế của card
-            const cardHeight = card.scrollHeight + 50; // + padding/margin
-            const finalHeight = cardHeight + 200; // + không gian bay lên
-
-            // Cập nhật chiều cao wrapper
-            wrapper.style.height = finalHeight + 'px';
+            // Tính chiều cao thực tế
+            setTimeout(() => {
+                const cardHeight = card.scrollHeight + 60;
+                const finalHeight = cardHeight + 220;
+                wrapper.style.height = finalHeight + 'px';
+            }, 100);
         }
     });
+
+    // === KHỞI CHẠY ===
+    window.onload = () => {
+        loadGreeting();
+
+        // Áp dụng màu nắp phong bì (CSS ::before không hỗ trợ JS trực tiếp)
+        const style = document.createElement('style');
+        style.textContent = `
+            #envelope::before { border-top-color: ${randomColor.flap} !important; }
+            #envelope { background-color: ${randomColor.base} !important; }
+        `;
+        document.head.appendChild(style);
+    };
 </script>
 
 </body>
