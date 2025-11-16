@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thiệp Chúc Mừng 20/11 - Hiệu ứng Bay ra (Fixed)</title>
+    <title>Thiệp Chúc Mừng 20/11 - Fixed Lỗi Dịch Chuyển</title>
     
     <style>
         /* Reset và Cài đặt cơ bản */
@@ -18,9 +18,9 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #f0f8ff; /* Nền xanh nhạt */
+            background-color: #f0f8ff; 
             font-family: 'Times New Roman', serif;
-            overflow: hidden; /* Ngăn cuộn */
+            overflow: hidden; 
         }
 
         /* ---------------------------------- */
@@ -32,37 +32,38 @@
             position: relative;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
             border-radius: 10px;
-            overflow: hidden; /* Rất quan trọng để ẩn phần thiệp bị tràn */
+            overflow: hidden; /* Vẫn giữ overflow: hidden */
         }
 
         /* ---------------------------------- */
         /* TẤM THIỆP */
         /* ---------------------------------- */
         .card {
-            width: 100%; /* Chiều rộng thiệp bằng wrapper */
-            height: 100%; /* Chiều cao thiệp bằng wrapper */
+            width: 100%; 
+            height: 100%; 
             position: absolute;
             top: 0;
             left: 0;
-            background-color: #ffffff; /* Màu nền thiệp trắng */
+            background-color: #ffffff; 
             border-radius: 8px;
             padding: 20px;
             box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05);
             
-            /* Ban đầu nằm phía dưới phong bì và ẩn */
-            transform: translateY(100%); /* Đẩy thiệp xuống hoàn toàn bên dưới wrapper */
+            /* Ban đầu ẩn trong phong bì */
+            transform: translateY(100%); 
             transition: transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
-            opacity: 0; /* Ban đầu ẩn hoàn toàn */
-            z-index: 1; /* Nằm dưới phong bì */
+            opacity: 0; 
+            z-index: 1; 
         }
 
-        /* Khi thiệp mở, nó bay lên và hiện ra */
+        /* FIX 1: Thiệp bay lên hoàn toàn */
         .card-wrapper.active .card {
-            transform: translateY(-50px); /* Bay lên trên và hiện ra */
-            opacity: 1; /* Hiện ra */
+            /* Tăng giá trị dịch chuyển lên để thiệp hiện ra hoàn toàn */
+            transform: translateY(-300px); 
+            opacity: 1; 
         }
         
-        /* Nội dung Thiệp */
+        /* Nội dung Thiệp (Không thay đổi) */
         .card-content {
             text-align: center;
         }
@@ -100,10 +101,10 @@
             width: 100%;
             height: 100%;
             position: absolute;
-            background-color: #f7b267; /* Màu cam đất */
+            background-color: #f7b267; 
             border-radius: 10px;
-            z-index: 2; /* Nằm trên thiệp */
-            transition: transform 1.5s ease, opacity 1.5s ease; /* Thêm transition cho phong bì */
+            z-index: 2; 
+            transition: transform 1.5s ease, opacity 1.5s ease; 
         }
         
         /* Nắp phong bì (Phần che phủ chính) */
@@ -116,36 +117,37 @@
             height: 0;
             border-left: 175px solid transparent;
             border-right: 175px solid transparent;
-            border-top: 125px solid #d89648; /* Màu đậm hơn cho nắp */
+            border-top: 125px solid #d89648; 
             transform-origin: top;
-            transition: transform 0.5s ease 0.8s; /* Có độ trễ để mở sau khi click */
-            z-index: 3; /* Nằm trên cả thân phong bì */
+            transition: transform 0.5s ease 0.8s; 
+            z-index: 3; 
         }
         
         /* Hiệu ứng nắp mở khi thiệp bay ra */
         .card-wrapper.active .envelope::before {
-            transform: rotateX(180deg); /* Mở nắp lên */
+            transform: rotateX(180deg); 
         }
         
-        /* Khi active, phong bì lùi xuống và mờ đi một chút để lộ thiệp */
+        /* FIX 2: Phong bì trượt xuống và biến mất hoàn toàn */
         .card-wrapper.active .envelope {
-            transform: translateY(50px); /* Lùi phong bì xuống dưới thiệp */
-            opacity: 0; /* Ẩn dần phong bì */
-            pointer-events: none; /* Không cho tương tác với phong bì nữa */
+            /* Tăng giá trị dịch chuyển xuống */
+            transform: translateY(350px); 
+            opacity: 0; 
+            pointer-events: none; 
         }
 
 
         /* ---------------------------------- */
-        /* NÚT MỞ PHONG BÌ */
+        /* NÚT MỞ PHONG BÌ (Không thay đổi) */
         /* ---------------------------------- */
         .open-button {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 4; /* Luôn nằm trên cùng */
+            z-index: 4; 
             padding: 10px 20px;
-            background-color: #cc3333; /* Màu đỏ nổi bật */
+            background-color: #cc3333; 
             color: white;
             border: none;
             border-radius: 20px;
@@ -159,7 +161,6 @@
             background-color: #a62929;
         }
         
-        /* Ẩn nút khi thiệp mở */
         .card-wrapper.active .open-button {
             opacity: 0;
             pointer-events: none;
@@ -197,13 +198,11 @@
     document.getElementById('openCardButton').addEventListener('click', function() {
         const wrapper = document.querySelector('.card-wrapper');
         
-        // Chỉ mở nếu thiệp chưa mở
         if (!wrapper.classList.contains('active')) {
             wrapper.classList.add('active');
             
-            // Ẩn nút ngay lập tức sau khi click
             this.style.opacity = '0';
-            this.style.pointerEvents = 'none'; // Ngăn click lại
+            this.style.pointerEvents = 'none';
         }
     });
 </script>
