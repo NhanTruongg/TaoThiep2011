@@ -244,16 +244,17 @@
 
     <div class="loading" id="loadingText">Đang tạo lời chúc từ AI...</div>
 
-    <!-- THIỆP SẼ ĐƯỢC TẠO Ở ĐÂY -->
     <div id="cardContainer"></div>
 
-    <!-- Google Gen AI SDK -->
     <script type="module">
-        import { GoogleGenerativeAI } from "https://cdn.jsdelivr.net/npm/@google/generative-ai@0.17.0/+esm";
+        // Import từ CDN chính thức của SDK mới
+        import { GoogleGenAI } from "https://cdn.jsdelivr.net/npm/@google/genai@0.17.0/+esm";
 
         // === CẤU HÌNH ===
-        const GEMINI_API_KEY = "YOUR_API_KEY_HERE"; // THAY BẰNG KEY THẬT
-        const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+        // THAY BẰNG KEY THẬT CỦA BẠN
+        const API_KEY = "AIzaSyDh6eUW1XaUDki_xDqJy_LigX5rMtx30uQ"; 
+        // Khởi tạo SDK mới
+        const ai = new GoogleGenAI({ apiKey: API_KEY });
 
         // === DANH SÁCH MÀU PHONG BÌ ===
         const envelopeColors = [
@@ -271,19 +272,21 @@
             `"Cảm ơn Thầy Cô đã dạy con không chỉ kiến thức, mà còn cách làm người. Chúc Thầy Cô luôn hạnh phúc!"`
         ];
 
-        // === TẠO LỜI CHÚC TỪ GEMINI ===
+        // === TẠO LỜI CHÚC TỪ GEMINI (Đã sửa) ===
         async function generateGreeting() {
             try {
-                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-                const prompt = `Viết một lời chúc ngắn (2-4 câu), trang trọng, ý nghĩa bằng tiếng Việt cho ngày 20/11 dành cho Thầy Cô giáo. Dùng <br><br> để xuống dòng. Không dùng dấu ngoặc kép.`;
+                // Sử dụng hàm generateContent chính xác của SDK mới
+                const response = await ai.models.generateContent({
+                    model: "gemini-2.5-flash", // Đổi sang model 2.5-flash
+                    contents: `Viết một lời chúc ngắn (2-4 câu), trang trọng, ý nghĩa bằng tiếng Việt cho ngày 20/11 dành cho Thầy Cô giáo. Dùng <br><br> để xuống dòng. Không dùng dấu ngoặc kép.`,
+                });
                 
-                const result = await model.generateContent(prompt);
-                const response = await result.response;
-                let text = response.text().trim();
+                let text = response.text.trim();
                 text = text.replace(/"/g, '').replace(/\n/g, '<br><br>');
                 return text;
             } catch (error) {
                 console.warn("Gemini lỗi, dùng lời chúc mặc định:", error);
+                // Dùng một lời chúc mặc định nếu API thất bại
                 return fallbackGreetings[Math.floor(Math.random() * fallbackGreetings.length)];
             }
         }
@@ -293,6 +296,7 @@
             const container = document.getElementById('cardContainer');
             const loading = document.getElementById('loadingText');
             loading.classList.add('show');
+            container.innerHTML = ''; // Xóa thiệp cũ
 
             // Tạo lời chúc
             const greeting = await generateGreeting();
@@ -325,19 +329,24 @@
             loading.classList.remove('show');
 
             // Gắn sự kiện mở
-            setTimeout(() => {
-                document.querySelector('.open-button').addEventListener('click', function() {
-                    const wrapper = document.getElementById('cardWrapper');
-                    const card = document.getElementById('card');
-                    if (!wrapper.classList.contains('active')) {
-                        wrapper.classList.add('active');
-                        setTimeout(() => {
-                            const height = card.scrollHeight + 280;
-                            wrapper.style.height = height + 'px';
-                        }, 100);
-                    }
-                });
-            }, 100);
+            // Dùng requestAnimationFrame để đảm bảo phần tử đã render
+            requestAnimationFrame(() => {
+                const openButton = document.querySelector('.open-button');
+                if (openButton) {
+                    openButton.addEventListener('click', function() {
+                        const wrapper = document.getElementById('cardWrapper');
+                        const card = document.getElementById('card');
+                        if (!wrapper.classList.contains('active')) {
+                            wrapper.classList.add('active');
+                            setTimeout(() => {
+                                // Điều chỉnh chiều cao sau khi thiệp bung ra
+                                const height = card.scrollHeight + 280; 
+                                wrapper.style.height = height + 'px';
+                            }, 100);
+                        }
+                    });
+                }
+            });
         }
 
         // === NÚT TẠO THIỆP ===
